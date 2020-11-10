@@ -1,7 +1,10 @@
 import logging
+from cachetools import TTLCache  # https://cachetools.readthedocs.io/en/stable/
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.handler import CancelHandler
+from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from os import getenv
 from sys import exit
@@ -18,6 +21,19 @@ bot = Bot(token=token)
 memory_storage = MemoryStorage()
 dp = Dispatcher(bot, storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
+cache = TTLCache(maxsize=float('inf'), ttl=1)
+
+
+class ThrottleMiddleware(BaseMiddleware):
+    async def on_process_message(self, message: types.Message, data: dict):
+        if not cache.get(message.chat.id):  # Записи в кэше нет, создаём
+            cache[message.chat.id] = True
+            return
+        else:  # троттлим
+            raise CancelHandler
+
+
+dp.middleware.setup(ThrottleMiddleware())
 
 
 def get_spin_keyboard():
