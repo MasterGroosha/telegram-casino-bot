@@ -33,10 +33,16 @@ async def cmd_start(message: types.Message, state: FSMContext):
                  "7️⃣7️⃣7️⃣ — 10 очков\n\n" \
                  "<b>Внимание</b>: бот предназначен исключительно для демонстрации " \
                  "и ваши данные могут быть сброшены в любой момент! Лудомания — это болезнь, " \
-                 "а никаких платных опций в боте нет."
+                 "а никаких платных опций в боте нет.\n\n" \
+                 "Убрать клавиатуру — /stop"
     data = await state.get_data()
     data.update(score=const.START_POINTS)
     await message.answer(start_text, parse_mode="HTML", reply_markup=get_spin_keyboard())
+
+
+@dp.message_handler(commands="stop")
+async def cmd_stop(message: types.Message):
+    await message.answer("Клавиатура удалена. Начать заново: /start", reply_markup=types.ReplyKeyboardRemove())
 
 
 @dp.message_handler(Text(equals=const.SPIN_TEXT))
