@@ -48,7 +48,7 @@ def get_casino_values(dice_value) -> Optional[List]:
     try:
         number = convert_to_base4(dice_value - 1)
     except Exception as ex:
-        print(f"Exception {type(ex)} with dice {dice_value}")
+        print(f"Exception {type(ex)} with dice {dice_value}: {str(ex)}")
         return None
 
     str_number = str(number).zfill(3)  # Если длина строки меньше трёх, то добиваем спереди нулями
