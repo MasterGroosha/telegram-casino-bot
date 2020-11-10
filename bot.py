@@ -45,6 +45,15 @@ async def cmd_stop(message: types.Message):
     await message.answer("Клавиатура удалена. Начать заново: /start", reply_markup=types.ReplyKeyboardRemove())
 
 
+@dp.message_handler(commands="help")
+async def cmd_help(message: types.Message):
+    help_text = "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь\\. Комбинаций, соответственно, 64\\. " \
+                "Для распознавания комбинации используется четверичная система, а пример кода " \
+                "для получения комбинации по значению от Bot API можно увидеть " \
+                "[здесь](https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac)\\."
+    await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2)
+
+
 @dp.message_handler(Text(equals=const.SPIN_TEXT))
 async def make_spin(message: types.Message, state: FSMContext):
     # Получение текущего счёта пользователя (или значения по умолчанию)
