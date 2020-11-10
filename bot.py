@@ -100,7 +100,7 @@ async def make_spin(message: types.Message, state: FSMContext):
     # Имитируем задержку и отправляем ответ пользователю
     await sleep(const.THROTTLE_TIME)
     await msg.reply(f"Ваша комбинация: {', '.join(dice_combo)} (№{msg.dice.value})\n{score_msg} "
-                    f"Ваш счёт: {new_score} очк.")
+                    f"Ваш счёт: <b>{new_score}</b>.", parse_mode=types.ParseMode.HTML)
 
 
 async def set_commands(dispatcher):
