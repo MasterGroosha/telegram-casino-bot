@@ -64,7 +64,7 @@ async def make_spin(message: types.Message, state: FSMContext):
     print(f"{new_score=}")
 
     # Готовим сообщение о выигрыше/проигрыше и
-    score_msg = "Вы выиграли!" if is_win else "К сожалению, вы не выиграли."
+    score_msg = f"Вы выиграли {delta} очков!" if is_win else "К сожалению, вы не выиграли."
 
     # Имитируем задержку и отправляем ответ пользователю
     await sleep(2.0)
