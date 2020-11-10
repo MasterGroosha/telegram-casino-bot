@@ -36,7 +36,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
                  "а никаких платных опций в боте нет.\n\n" \
                  "Убрать клавиатуру — /stop"
     data = await state.get_data()
-    data.update(score=const.START_POINTS)
+    await state.update_data(score=const.START_POINTS)
     await message.answer(start_text, parse_mode="HTML", reply_markup=get_spin_keyboard())
 
 
