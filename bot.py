@@ -35,7 +35,6 @@ async def cmd_start(message: types.Message, state: FSMContext):
                  "и ваши данные могут быть сброшены в любой момент! Лудомания — это болезнь, " \
                  "а никаких платных опций в боте нет.\n\n" \
                  "Убрать клавиатуру — /stop"
-    data = await state.get_data()
     await state.update_data(score=const.START_POINTS)
     await message.answer(start_text, parse_mode="HTML", reply_markup=get_spin_keyboard())
 
@@ -66,18 +65,14 @@ async def make_spin(message: types.Message, state: FSMContext):
                              "а можете нажать /start, чтобы начать всё заново. Или /stop, чтобы убрать клавиатуру.")
         return
 
-    print(f"{user_score=}")
-
     # Отправляем дайс и смотрим, что выпало
     msg = await message.answer_dice(emoji="🎰")
     dice_combo = casino.get_casino_values(msg.dice.value)
-    print(f"{dice_combo=}")
 
     # Проверяем, выигрышная комбинация или нет, обновляем счёт
     is_win, delta = casino.is_winning_combo(dice_combo)
     new_score = user_score + delta
     await state.update_data(score=new_score)
-    print(f"{new_score=}")
 
     # Готовим сообщение о выигрыше/проигрыше и
     score_msg = f"Вы выиграли {delta} очков!" if is_win else "К сожалению, вы не выиграли."
