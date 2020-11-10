@@ -50,6 +50,13 @@ async def make_spin(message: types.Message, state: FSMContext):
     # Получение текущего счёта пользователя (или значения по умолчанию)
     user_data = await state.get_data()
     user_score = user_data.get("score", const.START_POINTS)
+
+    if user_score == 0:
+        await message.answer_sticker(sticker=const.STICKER_FAIL)
+        await message.answer("Ваш баланс равен нулю. Вы можете смириться с судьбой и продолжить жить своей жизнью, "
+                             "а можете нажать /start, чтобы начать всё заново. Или /stop, чтобы убрать клавиатуру.")
+        return
+
     print(f"{user_score=}")
 
     # Отправляем дайс и смотрим, что выпало
