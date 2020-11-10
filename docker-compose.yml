@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+    bot:
+        image: registry.groosha.space/groosha/telegram-casino-bot:latest
+        container_name: "telegram-casino-bot"
+        restart: unless-stopped
+        environment:
+            - BOT_TOKEN=12345:AaBbCcDdEeFf
