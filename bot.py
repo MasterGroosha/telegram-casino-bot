@@ -88,5 +88,14 @@ async def make_spin(message: types.Message, state: FSMContext):
                          f"Ваш счёт: {new_score} очк.")
 
 
+async def set_commands(dispatcher):
+    commands = [
+        types.BotCommand(command="start", description="Перезапустить казино"),
+        types.BotCommand(command="stop", description="Убрать клавиатуру"),
+        types.BotCommand(command="help", description="Справочная информация")
+    ]
+    await bot.set_my_commands(commands)
+
+
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=set_commands)
