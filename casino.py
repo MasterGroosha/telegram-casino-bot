@@ -13,10 +13,16 @@ def is_winning_combo(combo) -> Tuple[bool, int]:
     :param combo: массив значений дайса (см. перем. casino)
     :return: пара "есть_выигрыш?", "изменение счёта игрока"
     """
-    if combo[0] == "лимон" and combo[1] == "лимон":
+
+    # Все комбинации из трёх одинаковых оцениваем в 10 или 7 очков
+    if combo[0] == combo[1] == combo[2]:
+        if combo[0] == "семь":
+            return True, 10
+        return True, 7
+    # Две семёрки + что угодно = 5 очков
+    elif combo[0] == combo[1] == "семь":
         return True, 5
-    elif combo[0] == "семь" and combo[1] == "семь" and combo[2] == "семь":
-        return True, 10
+    # Всё остальное -- минус одно очко
     else:
         return False, -1
 
