@@ -14,10 +14,8 @@ def is_winning_combo(combo) -> Tuple[bool, int]:
     :return: пара "есть_выигрыш?", "изменение счёта игрока"
     """
     if combo[0] == "лимон" and combo[1] == "лимон":
-        print(combo)
         return True, 5
     elif combo[0] == "семь" and combo[1] == "семь" and combo[2] == "семь":
-        print(combo)
         return True, 10
     else:
         return False, -1
