@@ -21,7 +21,7 @@ bot = Bot(token=token)
 memory_storage = MemoryStorage()
 dp = Dispatcher(bot, storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
-cache = TTLCache(maxsize=float('inf'), ttl=1)
+cache = TTLCache(maxsize=float('inf'), ttl=const.THROTTLE_TIME)
 
 
 class ThrottleMiddleware(BaseMiddleware):
@@ -97,7 +97,7 @@ async def make_spin(message: types.Message, state: FSMContext):
     score_msg = f"Вы выиграли {delta} очков!" if is_win else "К сожалению, вы не выиграли."
 
     # Имитируем задержку и отправляем ответ пользователю
-    await sleep(2.0)
+    await sleep(const.THROTTLE_TIME)
     await msg.reply(f"Ваша комбинация: {', '.join(dice_combo)} (№{msg.dice.value})\n{score_msg} "
                     f"Ваш счёт: {new_score} очк.")
 
