@@ -1,6 +1,6 @@
 # Source: https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 #           0       1         2        3
 casino = ["BAR", "виноград", "лимон", "семь"]
@@ -38,14 +38,18 @@ def convert_to_base4(number) -> int:
     return int(''.join(result))
 
 
-def get_casino_values(dice_value) -> List:
+def get_casino_values(dice_value) -> Optional[List]:
     """
     Возвращает то, что было на конкретном дайсе-казино
 
     :param dice_value: Число, которое вернул Bot API
     :return: строку, содержащую все выпавшие элементы
     """
-    number = convert_to_base4(dice_value - 1)
+    try:
+        number = convert_to_base4(dice_value - 1)
+    except Exception as ex:
+        print(f"Exception {type(ex)} with dice {dice_value}")
+        return None
 
     str_number = str(number).zfill(3)  # Если длина строки меньше трёх, то добиваем спереди нулями
     result = []

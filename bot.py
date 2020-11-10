@@ -68,6 +68,8 @@ async def make_spin(message: types.Message, state: FSMContext):
     # Отправляем дайс и смотрим, что выпало
     msg = await message.answer_dice(emoji="🎰")
     dice_combo = casino.get_casino_values(msg.dice.value)
+    if not dice_combo:
+        await message.answer(f"Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Проблема с dice №{msg.dice.value}")
 
     # Проверяем, выигрышная комбинация или нет, обновляем счёт
     is_win, delta = casino.is_winning_combo(dice_combo)
