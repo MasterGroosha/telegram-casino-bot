@@ -51,14 +51,17 @@ async def cmd_start(message: types.Message, state: FSMContext):
                  "<b>Внимание</b>: бот предназначен исключительно для демонстрации " \
                  "и ваши данные могут быть сброшены в любой момент! Лудомания — это болезнь, " \
                  "а никаких платных опций в боте нет.\n\n" \
-                 "Убрать клавиатуру — /stop"
+                 "Убрать клавиатуру — /stop\n" \
+                 "Показать клавиатуру, если пропала — /spin"
     await state.update_data(score=const.START_POINTS)
     await message.answer(start_text, parse_mode="HTML", reply_markup=get_spin_keyboard())
 
 
 @dp.message_handler(commands="stop")
 async def cmd_stop(message: types.Message):
-    await message.answer("Клавиатура удалена. Начать заново: /start", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Клавиатура удалена. Начать заново: /start, "
+                         "вернуть клавиатуру и продолжить: /spin",
+                         reply_markup=types.ReplyKeyboardRemove())
 
 
 @dp.message_handler(commands="help")
@@ -70,6 +73,7 @@ async def cmd_help(message: types.Message):
     await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2)
 
 
+@dp.message_handler(commands="spin")
 @dp.message_handler(Text(equals=const.SPIN_TEXT))
 async def make_spin(message: types.Message, state: FSMContext):
     # Получение текущего счёта пользователя (или значения по умолчанию)
@@ -83,7 +87,7 @@ async def make_spin(message: types.Message, state: FSMContext):
         return
 
     # Отправляем дайс и смотрим, что выпало
-    msg = await message.answer_dice(emoji="🎰")
+    msg = await message.answer_dice(emoji="🎰", reply_markup=get_spin_keyboard())
     dice_combo = casino.get_casino_values(msg.dice.value)
     if not dice_combo:
         await message.answer(f"Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Проблема с dice №{msg.dice.value}")
@@ -106,6 +110,7 @@ async def make_spin(message: types.Message, state: FSMContext):
 async def set_commands(dispatcher):
     commands = [
         types.BotCommand(command="start", description="Перезапустить казино"),
+        types.BotCommand(command="spin", description="Показать клавиатуру и сделать бросок"),
         types.BotCommand(command="stop", description="Убрать клавиатуру"),
         types.BotCommand(command="help", description="Справочная информация")
     ]
