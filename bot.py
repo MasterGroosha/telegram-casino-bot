@@ -17,6 +17,7 @@ token = getenv("BOT_TOKEN")
 if not token:
     exit("Error: no token provided")
 
+# Инициализация объектов бота, хранилища в памяти, логера и кэша (для троттлинга)
 bot = Bot(token=token)
 memory_storage = MemoryStorage()
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -24,6 +25,7 @@ logging.basicConfig(level=logging.INFO)
 cache = TTLCache(maxsize=float('inf'), ttl=const.THROTTLE_TIME)
 
 
+# Мидлварь для тротлинга. Игнорирует любые повторные запросы в течение {const.THROTTLE_TIME} секунд
 class ThrottleMiddleware(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
         if not cache.get(message.chat.id):  # Записи в кэше нет, создаём
