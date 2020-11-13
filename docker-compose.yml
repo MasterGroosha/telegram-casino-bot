@@ -1,8 +1,34 @@
 version: "3.8"
 services:
     bot:
-        image: registry.groosha.space/groosha/telegram-casino-bot:latest
+        image: registry.groosha.space/groosha/telegram-casino-bot/bot:latest
         container_name: "telegram-casino-bot"
         restart: unless-stopped
         environment:
             - BOT_TOKEN=12345:AaBbCcDdEeFf
+        depends_on:
+            - redis
+    redis:
+        image: registry.groosha.space/groosha/telegram-casino-bot/redis-custom:latest
+        container_name: "redis"
+        hostname: redis
+        ports:
+            - "6379:6379"
+        volumes:
+            - "config:/usr/local/etc/redis"
+            - "data:/data"
+        command: "redis-server /usr/local/etc/redis/redis.conf"
+
+volumes:
+    config:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: './config'
+    data:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: './redis-data'

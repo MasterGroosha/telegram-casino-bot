@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from os import getenv
 from sys import exit
 from asyncio import sleep
@@ -19,8 +19,7 @@ if not token:
 
 # Инициализация объектов бота, хранилища в памяти, логера и кэша (для троттлинга)
 bot = Bot(token=token)
-memory_storage = MemoryStorage()
-dp = Dispatcher(bot, storage=MemoryStorage())
+dp = Dispatcher(bot, storage=RedisStorage2(host="redis"))
 logging.basicConfig(level=logging.INFO)
 cache = TTLCache(maxsize=float('inf'), ttl=const.THROTTLE_TIME)
 
