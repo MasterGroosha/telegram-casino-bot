@@ -1,5 +1,5 @@
 import logging
-from cachetools import TTLCache  # https://cachetools.readthedocs.io/en/stable/
+from cachetools import TTLCache
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
