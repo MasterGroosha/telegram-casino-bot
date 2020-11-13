@@ -1,6 +1,6 @@
 # Source: https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac
 
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
 #           0       1         2        3
 casino = ["BAR", "виноград", "лимон", "семь"]
@@ -27,40 +27,15 @@ def is_winning_combo(combo) -> Tuple[bool, int]:
         return False, -1
 
 
-def convert_to_base4(number) -> int:
-    """
-    Преобразует число по основанию 10 в число по основанию 4
-
-    :param number: Число по основанию 10
-    :return: Число по основанию 4
-    """
-    result = []
-    while number > 0:
-        result.append(str(number % 4))
-        number //= 4
-    result.reverse()
-    return int(''.join(result))
-
-
-def get_casino_values(dice_value) -> Optional[List]:
+def get_casino_values(dice_value) -> List:
     """
     Возвращает то, что было на конкретном дайсе-казино
-
     :param dice_value: Число, которое вернул Bot API
-    :return: строку, содержащую все выпавшие элементы
+    :return: строка, содержащая все выпавшие элементы
     """
-    try:
-        number = convert_to_base4(dice_value) - 1
-    except Exception as ex:
-        print(f"Exception {type(ex)} with dice {dice_value}: {str(ex)}")
-        return None
-
-    str_number = str(number).zfill(3)  # Если длина строки меньше трёх, то добиваем спереди нулями
+    dice_value -= 1
     result = []
-    for letter in str_number:
-        int_letter = int(letter)
-        if int_letter > 3:
-            int_letter = 3
-        result.append(casino[int_letter % 4])
-    result.reverse()
+    for _ in range(3):
+        result.append(casino[dice_value % 4])
+        dice_value //= 4
     return result
