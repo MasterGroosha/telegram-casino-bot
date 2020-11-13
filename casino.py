@@ -32,6 +32,9 @@ def get_casino_values(dice_value) -> List:
     Возвращает то, что было на конкретном дайсе-казино
     :param dice_value: Число, которое вернул Bot API
     :return: строка, содержащая все выпавшие элементы
+
+    Альтернативный вариант (ещё раз спасибо t.me/svinerus):
+        return [casino[(dice_value - 1) // i % 4]for i in (1, 4, 16)]
     """
     dice_value -= 1
     result = []
