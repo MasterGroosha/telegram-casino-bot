@@ -1,7 +1,7 @@
 version: "3.8"
 services:
     bot:
-        image: registry.groosha.space/groosha/telegram-casino-bot/bot:latest
+        image: registry.groosha.space/groosha/telegram-casino-bot:latest
         container_name: "telegram-casino-bot"
         restart: unless-stopped
         environment:
@@ -9,7 +9,7 @@ services:
         depends_on:
             - redis
     redis:
-        image: registry.groosha.space/groosha/telegram-casino-bot/redis-custom:latest
+        image: registry.groosha.space/groosha/redis-with-config:v6.0-alpine
         container_name: "redis"
         hostname: redis
         ports:

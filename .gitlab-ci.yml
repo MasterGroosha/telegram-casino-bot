@@ -23,19 +23,8 @@ bot:latest:
       when: on_success
   script:
     - |
-      docker build --pull -t "$CI_REGISTRY_IMAGE/bot:latest" .
+      docker build --pull -t "$CI_REGISTRY_IMAGE:latest" .
       docker push "$CI_REGISTRY_IMAGE/bot:latest"
-
-
-redis:latest:
-  stage: build
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      when: on_success
-  script:
-    - |
-      docker build --pull -t "$CI_REGISTRY_IMAGE/redis-custom:latest" redis_build/
-      docker push "$CI_REGISTRY_IMAGE/redis-custom:latest"
 
 
 bot:tagged:
@@ -45,18 +34,6 @@ bot:tagged:
       when: on_success
   script:
     - |
-      docker pull "$CI_REGISTRY_IMAGE/bot:latest"
-      docker tag "$CI_REGISTRY_IMAGE/bot:latest" "$CI_REGISTRY_IMAGE/bot:$CI_COMMIT_TAG"
-      docker push "$CI_REGISTRY_IMAGE/bot:$CI_COMMIT_TAG"
-
-
-redis:tagged:
-  stage: build
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v([0-9.]+)$/'
-      when: on_success
-  script:
-    - |
-      docker pull "$CI_REGISTRY_IMAGE/redis-custom:latest"
-      docker tag "$CI_REGISTRY_IMAGE/redis-custom:latest" "$CI_REGISTRY_IMAGE/redis-custom:$CI_COMMIT_TAG"
-      docker push "$CI_REGISTRY_IMAGE/redis-custom:$CI_COMMIT_TAG"
+      docker pull "$CI_REGISTRY_IMAGE:latest"
+      docker tag "$CI_REGISTRY_IMAGE:latest" "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+      docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
