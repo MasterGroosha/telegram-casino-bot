@@ -24,7 +24,7 @@ bot:latest:
   script:
     - |
       docker build --pull -t "$CI_REGISTRY_IMAGE:latest" .
-      docker push "$CI_REGISTRY_IMAGE/bot:latest"
+      docker push "$CI_REGISTRY_IMAGE:latest"
 
 
 bot:tagged:
