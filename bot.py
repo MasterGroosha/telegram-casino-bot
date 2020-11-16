@@ -70,7 +70,10 @@ async def cmd_help(message: types.Message):
     help_text = "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь\\. Комбинаций, соответственно, 64\\. " \
                 "Для распознавания комбинации используется четверичная система, а пример кода " \
                 "для получения комбинации по значению от Bot API можно увидеть " \
-                "[здесь](https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac)\\."
+                "[здесь](https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac)\\.\n\n" \
+                "Исходный код бота доступен на [GitLab](https://git.groosha.space/groosha/telegram-casino-bot) " \
+                "и на [GitHub](https://github.com/MasterGroosha/telegram-casino-bot) (зеркало)\\.\n\n" \
+                "Задонатить автору на пачку зелёного чая можно на [ЮMoney](https://yoomoney.ru/to/41001515922197)\\."
     await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2)
 
 
