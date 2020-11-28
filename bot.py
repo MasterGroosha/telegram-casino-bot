@@ -44,14 +44,14 @@ def get_spin_keyboard():
 
 @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message, state: FSMContext):
-    start_text = "Добро пожаловать в наше виртуальное казино «Гудила Мороховая»!\n" \
+    start_text = "Добро пожаловать в наше виртуальное казино!\n" \
                  f"У вас {const.START_POINTS} очков. Каждая попытка стоит 1 очко, а за выигрышные комбинации вы получите:\n\n" \
                  "3 одинаковых символа (кроме семёрки) — 7 очков\n" \
                  "7️⃣7️⃣▫️ — 5 очков (точка = что угодно)\n" \
                  "7️⃣7️⃣7️⃣ — 10 очков\n\n" \
                  "<b>Внимание</b>: бот предназначен исключительно для демонстрации " \
                  "и ваши данные могут быть сброшены в любой момент! Лудомания — это болезнь, " \
-                 "а никаких платных опций в боте нет.\n\n" \
+                 "а никаких платных опций, кроме <i>необязательного</i> доната автору, в боте нет.\n\n" \
                  "Убрать клавиатуру — /stop\n" \
                  "Показать клавиатуру, если пропала — /spin"
     await state.update_data(score=const.START_POINTS)
@@ -74,7 +74,7 @@ async def cmd_help(message: types.Message):
                 "Исходный код бота доступен на [GitLab](https://git.groosha.space/groosha/telegram-casino-bot) " \
                 "и на [GitHub](https://github.com/MasterGroosha/telegram-casino-bot) \\(зеркало\\)\\.\n\n" \
                 "Задонатить автору на пачку зелёного чая можно на [ЮMoney](https://yoomoney.ru/to/41001515922197)\\."
-    await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2)
+    await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2, disable_web_page_preview=True)
 
 
 @dp.message_handler(commands="spin")
