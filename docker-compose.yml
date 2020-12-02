@@ -11,11 +11,9 @@ services:
         depends_on:
             - redis
     redis:
-        image: registry.groosha.space/groosha/redis-with-config:v6.0-alpine
+        image: registry.groosha.space/shared/redis-with-config:v6.0-alpine
         container_name: "redis"
         hostname: redis
-        ports:
-            - "127.0.0.1:6379:6379"
         volumes:
             - "config:/usr/local/etc/redis"
             - "data:/data"
