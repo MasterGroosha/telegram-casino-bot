@@ -22,7 +22,7 @@
 * [Docker](https://www.docker.com) и [Docker-Compose](https://docs.docker.com/compose) — быстрое разворачивание бота \
 в изолированном контейнере.
 
-Исходные тексты расположены на [GitLab](https://git.groosha.space/groosha/telegram-casino-bot) с автоматическим 
+Исходные тексты расположены на [GitLab](https://git.groosha.space/shared/telegram-casino-bot) с автоматическим 
 зеркалированием на [GitHub](https://github.com/MasterGroosha/telegram-casino-bot).
 
 ## Установка
