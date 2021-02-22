@@ -7,26 +7,26 @@ services:
         container_name: "telegram-casino-bot"
         restart: unless-stopped
         environment:
-            - BOT_TOKEN=12345:AaBbCcDdEeFf
+            - BOT_TOKEN=${BOT_TOKEN}
         depends_on:
             - redis
     redis:
-        image: registry.groosha.space/shared/redis-with-config:v6.0-alpine
-        container_name: "redis"
+        image: redis:6.0-alpine
+        container_name: "telegram-casino-redis"
         hostname: redis
         volumes:
-            - "config:/usr/local/etc/redis"
-            - "data:/data"
+            - "redis_config:/usr/local/etc/redis"
+            - "redis_data:/data"
         command: "redis-server /usr/local/etc/redis/redis.conf"
 
 volumes:
-    config:
+    redis_config:
         driver: local
         driver_opts:
             type: 'none'
             o: 'bind'
             device: './config'
-    data:
+    redis_data:
         driver: local
         driver_opts:
             type: 'none'
