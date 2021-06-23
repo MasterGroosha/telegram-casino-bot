@@ -66,8 +66,7 @@ async def cmd_help(message: types.Message):
                 "для получения комбинации по значению от Bot API можно увидеть " \
                 "<a href='https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac'>здесь</a>.\n\n" \
                 "Исходный код бота доступен на <a href='https://git.groosha.space/shared/telegram-casino-bot'>GitLab</a> " \
-                "и на <a href='https://github.com/MasterGroosha/telegram-casino-bot'>GitHub</a> (зеркало).\n\n" \
-                "Задонатить автору на пачку зелёного чая можно на [ЮMoney](https://yoomoney.ru/to/41001515922197)."
+                "и на <a href='https://github.com/MasterGroosha/telegram-casino-bot'>GitHub</a> (зеркало)."
     await message.answer(help_text, disable_web_page_preview=True)
 
 
