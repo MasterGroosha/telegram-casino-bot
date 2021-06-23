@@ -1,7 +1,15 @@
-FROM python:3.8-slim-buster
-WORKDIR /app
-COPY requirements.txt /app/requirements.txt
+# Отдельный сборочный образ
+FROM python:3.9-slim-buster as compile-image
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r /app/requirements.txt
-COPY *.py /app/
-CMD ["python", "bot.py"]
+ && pip install --no-cache-dir -r requirements.txt
+
+# Итоговый образ, в котором будет работать бот
+FROM python:3.9-slim-buster
+COPY --from=compile-image /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+WORKDIR /app
+COPY bot /app/bot
+CMD ["python", "-m", "bot"]

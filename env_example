@@ -1,0 +1,3 @@
+# Rename this file to .env !
+BOT_TOKEN=123456789:abcdefghijklmnopqrstuvwxyz
+REDIS_HOST=redis

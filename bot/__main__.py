@@ -1,14 +1,15 @@
 import logging
+from asyncio import sleep
+from os import getenv
+from sys import exit
+
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from os import getenv
-from sys import exit
-from asyncio import sleep
-import const
-import casino
-from throttling import ThrottlingMiddleware, rate_limit
+
+from bot import casino, const
+from bot.throttling import ThrottlingMiddleware, rate_limit
 
 # Токен берётся из переменной окружения (можно задать через systemd unit)
 token = getenv("BOT_TOKEN")
@@ -16,8 +17,13 @@ if not token:
     exit("Error: no token provided")
 
 # Инициализация объектов бота, хранилища в памяти, логера и кэша (для троттлинга)
-bot = Bot(token=token)
-dp = Dispatcher(bot, storage=RedisStorage2(host="redis"))
+bot = Bot(token=token, parse_mode="HTML")
+dp = Dispatcher(
+    bot,
+    storage=RedisStorage2(
+        host=getenv("REDIS_HOST", "redis")
+    )
+)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -40,28 +46,29 @@ async def cmd_start(message: types.Message, state: FSMContext):
                  "Убрать клавиатуру — /stop\n" \
                  "Показать клавиатуру, если пропала — /spin"
     await state.update_data(score=const.START_POINTS)
-    await message.answer(start_text, parse_mode="HTML", reply_markup=get_spin_keyboard())
+    await message.answer(start_text, reply_markup=get_spin_keyboard())
 
 
 @rate_limit("default")
 @dp.message_handler(commands="stop")
 async def cmd_stop(message: types.Message):
-    await message.answer("Клавиатура удалена. Начать заново: /start, "
-                         "вернуть клавиатуру и продолжить: /spin",
-                         reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(
+        "Клавиатура удалена. Начать заново: /start, вернуть клавиатуру и продолжить: /spin",
+        reply_markup=types.ReplyKeyboardRemove()
+    )
 
 
 @rate_limit("default")
 @dp.message_handler(commands="help")
 async def cmd_help(message: types.Message):
-    help_text = "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь\\. Комбинаций, соответственно, 64\\. " \
+    help_text = "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь. Комбинаций, соответственно, 64. " \
                 "Для распознавания комбинации используется четверичная система, а пример кода " \
                 "для получения комбинации по значению от Bot API можно увидеть " \
-                "[здесь](https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac)\\.\n\n" \
-                "Исходный код бота доступен на [GitLab](https://git.groosha.space/shared/telegram-casino-bot) " \
-                "и на [GitHub](https://github.com/MasterGroosha/telegram-casino-bot) \\(зеркало\\)\\.\n\n" \
-                "Задонатить автору на пачку зелёного чая можно на [ЮMoney](https://yoomoney.ru/to/41001515922197)\\."
-    await message.answer(help_text, parse_mode=types.ParseMode.MARKDOWN_V2, disable_web_page_preview=True)
+                "<a href='https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac'>здесь</a>.\n\n" \
+                "Исходный код бота доступен на <a href='https://git.groosha.space/shared/telegram-casino-bot'>GitLab</a> " \
+                "и на <a href='https://github.com/MasterGroosha/telegram-casino-bot'>GitHub</a> (зеркало).\n\n" \
+                "Задонатить автору на пачку зелёного чая можно на [ЮMoney](https://yoomoney.ru/to/41001515922197)."
+    await message.answer(help_text, disable_web_page_preview=True)
 
 
 @rate_limit("spin")
@@ -96,7 +103,7 @@ async def make_spin(message: types.Message, state: FSMContext):
     # Имитируем задержку и отправляем ответ пользователю
     await sleep(const.THROTTLE_TIME_SPIN)
     await msg.reply(f"Ваша комбинация: {', '.join(dice_combo)} (№{msg.dice.value})\n{score_msg} "
-                    f"Ваш счёт: <b>{new_score}</b>.", parse_mode=types.ParseMode.HTML)
+                    f"Ваш счёт: <b>{new_score}</b>.")
 
 
 async def set_commands(dispatcher):
@@ -109,6 +116,5 @@ async def set_commands(dispatcher):
     await bot.set_my_commands(commands)
 
 
-if __name__ == "__main__":
-    dp.middleware.setup(ThrottlingMiddleware())
-    executor.start_polling(dp, skip_updates=True, on_startup=set_commands)
+dp.middleware.setup(ThrottlingMiddleware())
+executor.start_polling(dp, skip_updates=True, on_startup=set_commands)

@@ -3,7 +3,7 @@ from aiogram import types
 from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from cachetools import TTLCache
-from const import THROTTLE_TIME_OTHER, THROTTLE_TIME_SPIN
+from bot.const import THROTTLE_TIME_OTHER, THROTTLE_TIME_SPIN
 
 # Разные по продолжительности кэши для разных типов действий (запуск игрового автомата или /-команды)
 caches = {
