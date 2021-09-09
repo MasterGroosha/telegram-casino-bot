@@ -28,7 +28,7 @@
 ## Установка
 
 Скопируйте файл `env_example` как `.env` (с точкой в начале), откройте и отредактируйте содержимое. Создайте каталоги 
-`redis-data` и `redis-config`, в последнем можете подсунуть свой конфиг как `redis.conf`.   
+`redis-data` и `redis-config`, в последний подложите свой конфиг `redis.conf` (в репозитории есть пример). \
 Запустите бота командой `docker-compose up -d`. 
 
 Альтернативный вариант с использованием [MemoryStorage](https://github.com/aiogram/aiogram/blob/dev-2.x/aiogram/contrib/fsm_storage/memory.py#L7) 

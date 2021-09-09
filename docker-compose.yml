@@ -1,9 +1,7 @@
 version: "3.8"
 services:
     bot:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: groosha/telegram-casino-bot:latest
         container_name: "telegram-casino-bot"
         restart: always
         environment:
