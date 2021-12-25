@@ -34,7 +34,6 @@ async def main():
             url=f"redis://default:{config.redis.password}@{config.redis.host}:{config.redis.port}",
             connection_kwargs={"decode_responses": True, "db": config.redis.db}
         )
-        print("Set redis mode")
     else:
         storage = MemoryStorage()
 
