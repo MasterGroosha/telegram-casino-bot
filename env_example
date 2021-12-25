@@ -1,3 +1,15 @@
-# Rename this file to .env !
+# Этот файл необходимо переименовать в .env
+
+# Токен бота, узнать можно у https://t.me/botfather
 BOT_TOKEN=123456789:abcdefghijklmnopqrstuvwxyz
+
+# Режим FSM. Варианты: memory, redis
+FSM_MODE=redis
+
+# Настройки подключения к Redis
 REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+# ОЧЕНЬ важно указать длинный и трудно подбираемый пароль
+# Сгенерировать можно, например, так (Linux): tr -dc A-Za-z0-9 </dev/urandom | head -c 64 ; echo ''
+REDIS_PASSWORD=IGivgFCKBmBmETW6cyoGQi7q0JQidBPgbrGSuoOQMGS86XEG8GnnS2811pn0DLoy

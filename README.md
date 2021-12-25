@@ -28,16 +28,8 @@
 ## Установка
 
 Скопируйте файл `env_example` как `.env` (с точкой в начале), откройте и отредактируйте содержимое. Создайте каталоги 
-`redis-data` и `redis-config`, в последний подложите свой конфиг `redis.conf` (в репозитории есть пример). \
+`redis_data` и `redis_config`, в последний подложите свой конфиг `redis.conf` (в репозитории есть пример). \
 Запустите бота командой `docker-compose up -d`. 
-
-Альтернативный вариант с использованием [MemoryStorage](https://github.com/aiogram/aiogram/blob/dev-2.x/aiogram/contrib/fsm_storage/memory.py#L7) 
-вместо Redis (**внимание:** в этом случае все данные будут сбрасываться при остановке бота, т.к. хранятся в оперативной памяти):  
-* замените импорт `RedisStorage2`: `from aiogram.contrib.fsm_storage.memory import MemoryStorage`
-* замените инициализацию диспетчера: `dp = Dispatcher(bot, storage=MemoryStorage())`  
-
-Для запуска без Docker воспользуйтесь командой `python -m bot`, установив переменную окружения `BOT_TOKEN` 
-токеном вашего бота.
 
 ## Благодарности
 
