@@ -14,7 +14,7 @@ from bot.ui_commands import set_bot_commands
 
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING)
 
     config: Config = load_config()
     bot = Bot(config.bot.token, parse_mode="HTML")
