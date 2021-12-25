@@ -42,8 +42,6 @@ async def cmd_spin(message: Message, state: FSMContext):
     new_score = user_score + score_change
     await state.update_data(score=new_score)
 
-    data = await state.get_data()
-
     await sleep(THROTTLE_TIME_SPIN)
     await msg.reply(
         dedent(answer_text_template).format(
