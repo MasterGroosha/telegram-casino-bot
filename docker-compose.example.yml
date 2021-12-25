@@ -1,32 +1,19 @@
 version: "3.8"
 services:
     bot:
-        image: groosha/telegram-casino-bot:latest
-        container_name: "telegram-casino-bot"
-        restart: always
-        environment:
-            - BOT_TOKEN
+        image: registry.groosha.space/shared/telegram-casino-bot/amd64:latest
+        # Для ARM64:
+        # imageL: registry.groosha.space/shared/telegram-casino-bot/arm64:latest
+        restart: "always"
+        stop_signal: SIGINT
+        env_file:
+            - .env
         depends_on:
             - redis
     redis:
         image: redis:6.2-alpine
-        container_name: "telegram-casino-redis"
-        hostname: redis
+        restart: "always"
         volumes:
-            - "redis_config:/usr/local/etc/redis"
-            - "redis_data:/data"
-        command: "redis-server /usr/local/etc/redis/redis.conf"
-
-volumes:
-    redis_config:
-        driver: local
-        driver_opts:
-            type: 'none'
-            o: 'bind'
-            device: './redis-config'
-    redis_data:
-        driver: local
-        driver_opts:
-            type: 'none'
-            o: 'bind'
-            device: './redis-data'
+            - "/opt/bots/casino-bot/redis_config:/usr/local/etc/redis"
+            - "/opt/bots/casino-bot/redis_data:/data"
+        command: "redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}"
