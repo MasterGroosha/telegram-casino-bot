@@ -1,37 +1,35 @@
-from dataclasses import dataclass
-from os import getenv
+from typing import Optional
+
+from pydantic import BaseSettings, BaseModel, validator
 
 
-@dataclass
-class TgBot:
-    token: str
-    fsm_type: str
-
-
-@dataclass
-class Redis:
+class Redis(BaseModel):
     host: str
-    port: int
+    port: int = 6379
     db: int
-    password: str
+    password: str = "IGivgFCKBmBmETW6cyoGQi7q0JQidBPgbrGSuoOQMGS86XEG8GnnS2811pn0DLoy"
 
 
-@dataclass
-class Config:
-    bot: TgBot
-    redis: Redis
+class Settings(BaseSettings):
+    bot_token: str
+    fsm_mode: str
+    redis: Optional[Redis]
+
+    @validator("fsm_mode")
+    def fsm_type_check(cls, v):
+        if v not in ("memory", "redis"):
+            raise ValueError("Incorrect fsm_mode. Must be one of: memory, redis")
+        return v
+
+    @validator("redis")
+    def skip_validating_redis(cls, v, values):
+        if values["fsm_mode"] == "redis" and v is None:
+            raise ValueError("Redis config is missing, though fsm_type is 'redis'")
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+        env_nested_delimiter = '__'
 
 
-def load_config() -> Config:
-    return Config(
-        bot=TgBot(
-            token=getenv("BOT_TOKEN"),
-            fsm_type=getenv("FSM_MODE", "memory")
-        ),
-        redis=Redis(
-            host=getenv("REDIS_HOST", "localhost"),
-            port=int(getenv("REDIS_PORT", 6379)),
-            db=int(getenv("REDIS_DB", 0)),
-            password=getenv("REDIS_PASSWORD", "IGivgFCKBmBmETW6cyoGQi7q0JQidBPgbrGSuoOQMGS86XEG8GnnS2811pn0DLoy")
-        )
-    )
+config = Settings()

@@ -1,14 +1,17 @@
 from textwrap import dedent
 
 from aiogram import Router
-from aiogram.dispatcher.filters import Command
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.const import START_POINTS
 from bot.keyboards import get_spin_keyboard
 
+flags = {"throttling_key": "default"}
+router = Router()
 
+
+@router.message(commands="start", flags=flags)
 async def cmd_start(message: Message, state: FSMContext):
     start_text = """\
     <b>Добро пожаловать в наше виртуальное казино!</b>
@@ -28,6 +31,7 @@ async def cmd_start(message: Message, state: FSMContext):
     await message.answer(dedent(start_text).format(points=START_POINTS), reply_markup=get_spin_keyboard())
 
 
+@router.message(commands="stop", flags=flags)
 async def cmd_stop(message: Message):
     await message.answer(
         "Клавиатура удалена. Начать заново: /start, вернуть клавиатуру и продолжить: /spin",
@@ -35,6 +39,7 @@ async def cmd_stop(message: Message):
     )
 
 
+@router.message(commands="help", flags=flags)
 async def cmd_help(message: Message):
     help_text = \
         "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь. Комбинаций, соответственно, 64. " \
@@ -44,10 +49,3 @@ async def cmd_help(message: Message):
         "Исходный код бота доступен на <a href='https://github.com/MasterGroosha/telegram-casino-bot'>GitHub</a> " \
         "и на <a href='https://git.groosha.space/shared/telegram-casino-bot'>GitLab</a>."
     await message.answer(help_text, disable_web_page_preview=True)
-
-
-def register_default_commands(router: Router):
-    flags = {"throttling_key": "default"}
-    router.message.register(cmd_start, Command(commands="start"), flags=flags)
-    router.message.register(cmd_stop, Command(commands="stop"), flags=flags)
-    router.message.register(cmd_help, Command(commands="help"), flags=flags)

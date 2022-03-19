@@ -2,3 +2,4 @@
 aiogram==3.0.0b2
 cachetools~=5.0.0
 aioredis~=2.0.0
+python-dotenv==0.19.2

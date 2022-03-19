@@ -2,7 +2,7 @@ from asyncio import sleep
 from textwrap import dedent
 
 from aiogram import Router
-from aiogram.dispatcher.filters import Command, Text
+from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -10,7 +10,12 @@ from bot.const import START_POINTS, STICKER_FAIL, SPIN_TEXT, THROTTLE_TIME_SPIN
 from bot.dice_check import get_combo_data
 from bot.keyboards import get_spin_keyboard
 
+flags = {"throttling_key": "spin"}
+router = Router()
 
+
+@router.message(commands="spin", flags=flags)
+@router.message(Text(text=SPIN_TEXT), flags=flags)
 async def cmd_spin(message: Message, state: FSMContext):
     user_data = await state.get_data()
     user_score = user_data.get("score", START_POINTS)
@@ -51,9 +56,3 @@ async def cmd_spin(message: Message, state: FSMContext):
             new_score=new_score
         )
     )
-
-
-def register_spin_command(router: Router):
-    flags = {"throttling_key": "spin"}
-    router.message.register(cmd_spin, Command(commands="spin"), flags=flags)
-    router.message.register(cmd_spin, Text(text=SPIN_TEXT), flags=flags)
