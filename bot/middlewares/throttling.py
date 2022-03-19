@@ -2,7 +2,7 @@ from typing import Any, Awaitable, Callable, Dict, cast
 
 from aiogram import BaseMiddleware
 from aiogram.dispatcher.event.handler import HandlerObject
-from aiogram.types import Update, Message
+from aiogram.types import TelegramObject, Message
 from cachetools import TTLCache
 
 from bot.const import THROTTLE_TIME_SPIN, THROTTLE_TIME_OTHER
@@ -16,8 +16,8 @@ class ThrottlingMiddleware(BaseMiddleware):
 
     async def __call__(
             self,
-            handler: Callable[[Update, Dict[str, Any]], Awaitable[Any]],
-            event: Update,
+            handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            event: TelegramObject,
             data: Dict[str, Any],
     ) -> Any:
         real_handler: HandlerObject = data.get("handler")
