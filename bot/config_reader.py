@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     def skip_validating_redis(cls, v, values):
         if values["fsm_mode"] == "redis" and v is None:
             raise ValueError("Redis config is missing, though fsm_type is 'redis'")
+        return v
 
     class Config:
         env_file = '.env'
