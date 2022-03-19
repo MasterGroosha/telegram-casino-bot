@@ -6,13 +6,13 @@ services:
         # imageL: registry.groosha.space/shared/telegram-casino-bot/arm64:latest
         restart: "always"
         stop_signal: SIGINT
-        env_file:
-            - .env
+        env_file: .env
         depends_on:
             - redis
     redis:
         image: redis:6.2-alpine
         restart: "always"
+        env_file: .env
         volumes:
             - "/opt/bots/casino-bot/redis_config:/usr/local/etc/redis"
             - "/opt/bots/casino-bot/redis_data:/data"
