@@ -15,13 +15,13 @@ from bot.ui_commands import set_bot_commands
 async def main():
     logging.basicConfig(level=logging.WARNING)
 
-    bot = Bot(config.bot_token, parse_mode="HTML")
+    bot = Bot(config.bot_token.get_secret_value(), parse_mode="HTML")
 
     # Выбираем нужный сторадж
     if config.fsm_mode == "redis":
         storage = RedisStorage.from_url(
-            url=f"redis://default:{config.redis.password}@{config.redis.host}:{config.redis.port}",
-            connection_kwargs={"decode_responses": True, "db": config.redis.db}
+            url=config.redis,
+            connection_kwargs={"decode_responses": True}
         )
     else:
         storage = MemoryStorage()

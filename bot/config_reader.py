@@ -1,19 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseSettings, BaseModel, validator
-
-
-class Redis(BaseModel):
-    host: str
-    port: int = 6379
-    db: int
-    password: str = "IGivgFCKBmBmETW6cyoGQi7q0JQidBPgbrGSuoOQMGS86XEG8GnnS2811pn0DLoy"
+from pydantic import BaseSettings, validator, SecretStr, RedisDsn
 
 
 class Settings(BaseSettings):
-    bot_token: str
+    bot_token: SecretStr
     fsm_mode: str
-    redis: Optional[Redis]
+    redis: Optional[RedisDsn]
 
     @validator("fsm_mode")
     def fsm_type_check(cls, v):
@@ -30,7 +23,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'
-        env_nested_delimiter = '__'
 
 
 config = Settings()
