@@ -1,19 +1,21 @@
 version: "3.8"
 services:
     bot:
-        image: registry.groosha.space/shared/telegram-casino-bot/amd64:latest
-        # Для ARM64:
-        # imageL: registry.groosha.space/shared/telegram-casino-bot/arm64:latest
+        # Универсальный образ для x86/ARM64
+        image: groosha/telegram-casino-bot:latest
         restart: "always"
         stop_signal: SIGINT
-        env_file: .env
+        volumes:
+            # Путь к .env файлу с настройками
+            - "/home/user/casino-bot-redis/.env:/app/.env"
         depends_on:
             - redis
     redis:
-        image: redis:6.2-alpine
+        image: redis:7
         restart: "always"
-        env_file: .env
         volumes:
-            - "/opt/bots/casino-bot/redis_config:/usr/local/etc/redis"
-            - "/opt/bots/casino-bot/redis_data:/data"
-        command: "redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}"
+            # Путь к каталогу с redis.conf
+            - "/home/user/casino-bot-redis/redis_config:/usr/local/etc/redis"
+            # Путь к каталогу, где будет лежать дамп базы Redis
+            - "/home/user/casino-bot-redis/redis_data:/data"
+        command: "redis-server /usr/local/etc/redis/redis.conf"
