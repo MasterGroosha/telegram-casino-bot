@@ -21,15 +21,15 @@
 * [cachetools](https://cachetools.readthedocs.io/en/stable) — реализация троттлинга для борьбы с флудом;
 * [Docker](https://www.docker.com) и [Docker-Compose](https://docs.docker.com/compose) — быстрое разворачивание бота \
 в изолированном контейнере.
-
-Исходные тексты расположены на [GitLab](https://git.groosha.space/shared/telegram-casino-bot) с автоматическим 
-зеркалированием на [GitHub](https://github.com/MasterGroosha/telegram-casino-bot).
+* Systemd
 
 ## Установка
 
 Скопируйте файл `env_example` как `.env` (с точкой в начале), откройте и отредактируйте содержимое. Создайте каталоги 
 `redis_data` и `redis_config`, в последний подложите свой конфиг `redis.conf` (в репозитории есть пример). \
 Запустите бота командой `docker-compose up -d`. 
+
+Альтернативный вариант: используйте Systemd, пример службы тоже есть в репозитории.
 
 ## Благодарности
 
