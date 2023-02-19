@@ -3,3 +3,4 @@
 .vscode/
 *.ipynb
 docker-compose.yml
+.env
