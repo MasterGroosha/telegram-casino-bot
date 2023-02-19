@@ -1,5 +1,5 @@
 --pre
-aiogram==3.0.0b2
-cachetools~=5.0.0
-aioredis~=2.0.0
-python-dotenv==0.19.2
+aiogram==3.0.0b7
+cachetools==5.3.0
+redis==4.5.1
+python-dotenv==0.21.1

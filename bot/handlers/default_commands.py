@@ -1,7 +1,8 @@
 from textwrap import dedent
 
 from aiogram import Router
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from bot.const import START_POINTS
@@ -11,7 +12,7 @@ flags = {"throttling_key": "default"}
 router = Router()
 
 
-@router.message(commands="start", flags=flags)
+@router.message(Command("start"), flags=flags)
 async def cmd_start(message: Message, state: FSMContext):
     start_text = """\
     <b>Добро пожаловать в наше виртуальное казино!</b>
@@ -31,7 +32,7 @@ async def cmd_start(message: Message, state: FSMContext):
     await message.answer(dedent(start_text).format(points=START_POINTS), reply_markup=get_spin_keyboard())
 
 
-@router.message(commands="stop", flags=flags)
+@router.message(Command("stop"), flags=flags)
 async def cmd_stop(message: Message):
     await message.answer(
         "Клавиатура удалена. Начать заново: /start, вернуть клавиатуру и продолжить: /spin",
@@ -39,7 +40,7 @@ async def cmd_stop(message: Message):
     )
 
 
-@router.message(commands="help", flags=flags)
+@router.message(Command("help"), flags=flags)
 async def cmd_help(message: Message):
     help_text = \
         "В казино доступно 4 элемента: BAR, виноград, лимон и цифра семь. Комбинаций, соответственно, 64. " \
