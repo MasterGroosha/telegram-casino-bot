@@ -40,7 +40,7 @@ async def main():
     dp.include_router(spin.router)
 
     # Регистрация мидлвари для троттлинга
-    dp.message.middleware(ThrottlingMiddleware())
+    dp.message.middleware(ThrottlingMiddleware(config.throttle_time_spin, config.throttle_time_other))
 
     # Установка команд в интерфейсе
     await set_bot_commands(bot)

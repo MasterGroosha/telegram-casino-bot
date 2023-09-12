@@ -10,7 +10,6 @@ from aiogram.types import Message
 from fluent.runtime import FluentLocalization
 
 from bot.config_reader import Settings
-from bot.const import THROTTLE_TIME_SPIN
 from bot.dice_check import get_combo_text, get_score_change
 from bot.filters import SpinTextFilter
 from bot.keyboards import get_spin_keyboard
@@ -48,7 +47,7 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
     new_score = user_score + score_change
     await state.update_data(score=new_score)
 
-    await sleep(THROTTLE_TIME_SPIN)
+    await sleep(config.throttle_time_spin)
     await msg.reply(
         l10n.format_value(
             "after-spin",
