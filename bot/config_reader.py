@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     bot_token: SecretStr
     fsm_mode: FSMMode
     redis: Optional[RedisDsn] = None
+    bot_language: str
+    starting_points: int = 50
     send_gameover_sticker: bool = False
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
