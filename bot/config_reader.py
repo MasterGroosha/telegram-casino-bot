@@ -24,6 +24,3 @@ class Settings(BaseSettings):
             err = 'FSM Mode is set to "Redis", but Redis DNS is missing!'
             raise ValueError(err)
         return v
-
-
-config = Settings()
