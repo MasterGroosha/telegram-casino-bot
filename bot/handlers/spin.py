@@ -33,10 +33,6 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
     # Отправка дайса пользователю
     msg = await message.answer_dice(emoji=DiceEmoji.SLOT_MACHINE, reply_markup=get_spin_keyboard(l10n))
 
-    localized_combo_text = [
-        l10n.format_value(item) for item in get_combo_text(msg.dice.value)
-    ]
-
     score_change = get_score_change(msg.dice.value)
 
     if score_change < 0:
@@ -53,7 +49,7 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
         l10n.format_value(
             "after-spin",
             {
-                "combo_text": ", ".join(localized_combo_text),
+                "combo_text": get_combo_text(msg.dice.value, l10n),
                 "dice_value": msg.dice.value,
                 "result_text": win_or_lose_text,
                 "new_score": new_score

@@ -1,8 +1,12 @@
 # Source: https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac
 
-from typing import List, Tuple
+from functools import lru_cache
+from typing import List
+
+from fluent.runtime import FluentLocalization
 
 
+@lru_cache(maxsize=64)
 def get_score_change(dice_value: int) -> int:
     """
     Проверка на выигрышную комбинацию
@@ -24,7 +28,7 @@ def get_score_change(dice_value: int) -> int:
         return -1
 
 
-def get_combo_text(dice_value: int) -> List[str]:
+def get_combo_parts(dice_value: int) -> List[str]:
     """
     Возвращает то, что было на конкретном дайсе-казино
     :param dice_value: значение дайса (число)
@@ -33,8 +37,9 @@ def get_combo_text(dice_value: int) -> List[str]:
     Альтернативный вариант (ещё раз спасибо t.me/svinerus):
         return [casino[(dice_value - 1) // i % 4]for i in (1, 4, 16)]
     """
+    # Do not edit these values; they are actually translation keys
     #           0       1         2        3
-    values = ["BAR", "виноград", "лимон", "семь"]
+    values = ["bar", "grapes", "lemon", "seven"]
 
     dice_value -= 1
     result = []
@@ -44,14 +49,9 @@ def get_combo_text(dice_value: int) -> List[str]:
     return result
 
 
-def get_combo_data(dice_value: int) -> Tuple[int, str]:
-    """
-    Возвращает все необходимые для показа информации о комбинации данные
-
-    :param dice_value: значение дайса (число)
-    :return: Пара ("изменение счёта", "список выпавших элементов")
-    """
-    return (
-        get_score_change(dice_value),
-        ', '.join(get_combo_text(dice_value))
-    )
+@lru_cache(maxsize=64)
+def get_combo_text(dice_value: int, l10n: FluentLocalization) -> str:
+    parts: list[str] = get_combo_parts(dice_value)
+    for i in range(len(parts)):
+        parts[i] = l10n.format_value(parts[i])
+    return ", ".join(parts)
