@@ -1,6 +1,8 @@
 from asyncio import sleep
+from contextlib import suppress
 
 from aiogram import Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -25,8 +27,10 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
     user_score = user_data.get("score", config.starting_points)
 
     if user_score == 0:
-        # todo fix
-        # await message.answer_sticker(sticker=STICKER_FAIL)
+        if config.send_gameover_sticker:
+            # In case sticker file_id is invalid or missing
+            with suppress(TelegramBadRequest):
+                await message.answer_sticker(l10n.format_value("zero-balance-sticker"))
         await message.answer(l10n.format_value("zero-balance"))
         return
 
