@@ -42,8 +42,8 @@ async def main():
     # Регистрация мидлвари для троттлинга
     dp.message.middleware(ThrottlingMiddleware(config.throttle_time_spin, config.throttle_time_other))
 
-    # Установка команд в интерфейсе
-    await set_bot_commands(bot)
+    # Set bot commands in the UI
+    await set_bot_commands(bot, l10n)
 
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
