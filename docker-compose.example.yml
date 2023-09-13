@@ -19,3 +19,5 @@ services:
             # Path to Redis dumps directory
             - "/home/user/casino-bot-redis/redis_data:/data"
         command: "redis-server /usr/local/etc/redis/redis.conf"
+        healthcheck:
+            test: [ "CMD", "redis-cli","ping" ]
