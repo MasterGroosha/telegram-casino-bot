@@ -21,7 +21,7 @@ async def main():
     # Выбираем нужный сторадж
     if config.fsm_mode == "redis":
         storage = RedisStorage.from_url(
-            url=config.redis,
+            url=str(config.redis),
             connection_kwargs={"decode_responses": True}
         )
     else:
