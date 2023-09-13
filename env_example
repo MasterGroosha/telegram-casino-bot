@@ -1,12 +1,35 @@
-# Этот файл необходимо переименовать в .env
+# Rename this file to .env
+# Commented options are optional, feel free to
+# uncomment them if needed
 
-# Токен бота, узнать можно у https://t.me/botfather
+# Get your bot token from https://t.me/botfather
 BOT_TOKEN=123456789:abcdefghijklmnopqrstuvwxyz
 
-# Режим FSM. Варианты: memory, redis
-FSM_MODE=redis
+# FSM Mode. Possible options: memory, redis
+FSM_MODE=memory
 
-# Настройки подключения к Redis
-# Не все атрибуты обязательные,
-# в некоторых случаях достаточно redis://host
-REDIS=redis://user:pass@host:port
+# Redis connection string (DSN)
+# REDIS=redis://user:pass@host:port
+# or
+# REDIS=redis://host
+# or whatever your settings are
+
+# Language to use in bot. Check locales folder for
+# information how to use your own locale
+BOT_LANGUAGE=en
+
+# Starting points for your game.
+# If not set, value 50 is used
+# STARTING_POINTS=50
+
+# Whether to set a sticker (defined by locale) when
+# balance is zero, or not. Defaults to False (do not send)
+# SEND_GAMEOVER_STICKER=false
+
+# How much time to wait until next spin
+# Defaults to 2 seconds (which is roughly dice animation duration)
+# THROTTLE_TIME_SPIN=2
+
+# How much time to wait until next other command send
+# Defaults to 1 second
+# THROTTLE_TIME_OTHER=1
