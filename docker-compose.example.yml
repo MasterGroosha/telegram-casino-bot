@@ -8,6 +8,8 @@ services:
         volumes:
             # Path to .env file with settings
             - "/home/user/casino-bot-redis/.env:/app/.env"
+            # Path to localization directories
+            - "/home/user/casino-bot-redis/locales:/app/bot/locales"
         depends_on:
             - redis
     redis:
