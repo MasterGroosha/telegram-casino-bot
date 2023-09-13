@@ -48,7 +48,10 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
     new_score = user_score + score_change
     await state.update_data(score=new_score)
 
-    await sleep(config.throttle_time_spin)
+    # This delay is roughly equivalent of animation duration
+    # of slot machine. Depending on dice value,
+    # animation duration is different, but approx. 2 seconds
+    await sleep(2.0)
     await msg.reply(
         l10n.format_value(
             "after-spin",
