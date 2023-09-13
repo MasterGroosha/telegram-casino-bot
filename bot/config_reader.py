@@ -1,28 +1,31 @@
+from enum import Enum
 from typing import Optional
 
-from pydantic import BaseSettings, validator, SecretStr, RedisDsn
+from pydantic import field_validator, SecretStr, RedisDsn, FieldValidationInfo
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class FSMMode(str, Enum):
+    MEMORY = "memory"
+    REDIS = "redis"
 
 
 class Settings(BaseSettings):
     bot_token: SecretStr
-    fsm_mode: str
-    redis: Optional[RedisDsn]
+    fsm_mode: FSMMode
+    redis: Optional[RedisDsn] = None
+    bot_language: str
+    starting_points: int = 50
+    send_gameover_sticker: bool = False
+    throttle_time_spin: int = 2
+    throttle_time_other: int = 1
 
-    @validator("fsm_mode")
-    def fsm_type_check(cls, v):
-        if v not in ("memory", "redis"):
-            raise ValueError("Incorrect fsm_mode. Must be one of: memory, redis")
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+
+    @field_validator("redis", mode="after")
+    @classmethod
+    def skip_validating_redis(cls, v: Optional[RedisDsn], info: FieldValidationInfo):
+        if info.data.get("fsm_mode") == FSMMode.REDIS and v is None:
+            err = 'FSM Mode is set to "Redis", but Redis DNS is missing!'
+            raise ValueError(err)
         return v
-
-    @validator("redis")
-    def skip_validating_redis(cls, v, values):
-        if values["fsm_mode"] == "redis" and v is None:
-            raise ValueError("Redis config is missing, though fsm_type is 'redis'")
-        return v
-
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-
-
-config = Settings()

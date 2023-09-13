@@ -1,13 +1,17 @@
 from asyncio import sleep
-from textwrap import dedent
+from contextlib import suppress
 
 from aiogram import Router
-from aiogram.filters import Command, Text
+from aiogram.enums.dice_emoji import DiceEmoji
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from fluent.runtime import FluentLocalization
 
-from bot.const import START_POINTS, STICKER_FAIL, SPIN_TEXT, THROTTLE_TIME_SPIN
-from bot.dice_check import get_combo_data
+from bot.config_reader import Settings
+from bot.dice_check import get_combo_text, get_score_change
+from bot.filters import SpinTextFilter
 from bot.keyboards import get_spin_keyboard
 
 flags = {"throttling_key": "spin"}
@@ -15,44 +19,47 @@ router = Router()
 
 
 @router.message(Command("spin"), flags=flags)
-@router.message(Text(text=SPIN_TEXT), flags=flags)
-async def cmd_spin(message: Message, state: FSMContext):
+@router.message(SpinTextFilter(), flags=flags)
+async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization, config: Settings):
+    # Get current score
     user_data = await state.get_data()
-    user_score = user_data.get("score", START_POINTS)
+    user_score = user_data.get("score", config.starting_points)
 
     if user_score == 0:
-        await message.answer_sticker(sticker=STICKER_FAIL)
-        await message.answer(
-            "Ваш баланс равен нулю. Вы можете смириться с судьбой и продолжить жить своей жизнью, "
-            "а можете нажать /start, чтобы начать всё заново. Или /stop, чтобы просто убрать клавиатуру."
-        )
+        if config.send_gameover_sticker:
+            # In case sticker file_id is invalid or missing
+            with suppress(TelegramBadRequest):
+                await message.answer_sticker(l10n.format_value("zero-balance-sticker"))
+        await message.answer(l10n.format_value("zero-balance"))
         return
 
-    answer_text_template = """\
-        Ваша комбинация: {combo_text} (№{dice_value}).
-        {win_or_lose_text} Ваш счёт: <b>{new_score}</b>.
-        """
+    # Send dice to user
+    msg = await message.answer_dice(emoji=DiceEmoji.SLOT_MACHINE, reply_markup=get_spin_keyboard(l10n))
 
-    # Отправка дайса пользователю
-    msg = await message.answer_dice(emoji="🎰", reply_markup=get_spin_keyboard())
+    # Check whether he won or not
+    score_change = get_score_change(msg.dice.value)
 
-    # Получение информации о дайсе
-    score_change, combo_text = get_combo_data(msg.dice.value)
     if score_change < 0:
-        win_or_lose_text = "К сожалению, вы не выиграли."
+        win_or_lose_text = l10n.format_value("spin-fail")
     else:
-        win_or_lose_text = f"Вы выиграли {score_change} очков!"
+        win_or_lose_text = l10n.format_value("spin-success", {"score_change": score_change})
 
-    # Обновление счёта
+    # Updating score in FSM data
     new_score = user_score + score_change
     await state.update_data(score=new_score)
 
-    await sleep(THROTTLE_TIME_SPIN)
+    # This delay is roughly equivalent of animation duration
+    # of slot machine. Depending on dice value,
+    # animation duration is different, but approx. 2 seconds
+    await sleep(2.0)
     await msg.reply(
-        dedent(answer_text_template).format(
-            combo_text=combo_text,
-            dice_value=msg.dice.value,
-            win_or_lose_text=win_or_lose_text,
-            new_score=new_score
+        l10n.format_value(
+            "after-spin",
+            {
+                "combo_text": get_combo_text(msg.dice.value, l10n),
+                "dice_value": msg.dice.value,
+                "result_text": win_or_lose_text,
+                "new_score": new_score
+            }
         )
     )

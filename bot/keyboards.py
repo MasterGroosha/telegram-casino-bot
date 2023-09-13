@@ -1,9 +1,12 @@
+from functools import cache
+
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from bot.const import SPIN_TEXT
+from fluent.runtime import FluentLocalization
 
 
-def get_spin_keyboard():
+@cache
+def get_spin_keyboard(l10n: FluentLocalization):
     keyboard = [
-        [KeyboardButton(text=SPIN_TEXT)]
+        [KeyboardButton(text=l10n.format_value("spin-button-text"))]
     ]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)

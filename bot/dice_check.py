@@ -1,40 +1,48 @@
 # Source: https://gist.github.com/MasterGroosha/963c0a82df348419788065ab229094ac
 
-from typing import List, Tuple
+from functools import lru_cache
+from typing import List
+
+from fluent.runtime import FluentLocalization
 
 
+@lru_cache(maxsize=64)
 def get_score_change(dice_value: int) -> int:
     """
-    Проверка на выигрышную комбинацию
+    Checks for the winning combination
 
-    :param dice_value: значение дайса (число)
-    :return: изменение счёта игрока (число)
+    :param dice_value: dice value (1-64)
+    :return: user score change (integer)
     """
 
-    # Совпадающие значения (кроме 777)
+    # three-of-a-kind (except 777)
     if dice_value in (1, 22, 43):
         return 7
-    # Начинающиеся с двух семёрок (опять же, не учитываем 777)
+    # starting with two 7's (again, except 777)
     elif dice_value in (16, 32, 48):
         return 5
-    # Джекпот (три семёрки)
+    # jackpot (777)
     elif dice_value == 64:
         return 10
     else:
         return -1
 
 
-def get_combo_text(dice_value: int) -> List[str]:
+def get_combo_parts(dice_value: int) -> List[str]:
     """
-    Возвращает то, что было на конкретном дайсе-казино
-    :param dice_value: значение дайса (число)
-    :return: массив строк, содержащий все выпавшие элементы в виде текста
+    Returns exact icons from dice (bar, grapes, lemon, seven).
+    Do not edit these values, since they are subject to be translated
+    by outer code.
+    :param dice_value: dice value (1-64)
+    :return: list of icons' texts
+    """
 
-    Альтернативный вариант (ещё раз спасибо t.me/svinerus):
-        return [casino[(dice_value - 1) // i % 4]for i in (1, 4, 16)]
-    """
+    # Alternative way (credits to t.me/svinerus):
+    #   return [casino[(dice_value - 1) // i % 4]for i in (1, 4, 16)]
+
+    # Do not edit these values; they are actually translation keys
     #           0       1         2        3
-    values = ["BAR", "виноград", "лимон", "семь"]
+    values = ["bar", "grapes", "lemon", "seven"]
 
     dice_value -= 1
     result = []
@@ -44,14 +52,15 @@ def get_combo_text(dice_value: int) -> List[str]:
     return result
 
 
-def get_combo_data(dice_value: int) -> Tuple[int, str]:
+@lru_cache(maxsize=64)
+def get_combo_text(dice_value: int, l10n: FluentLocalization) -> str:
     """
-    Возвращает все необходимые для показа информации о комбинации данные
-
-    :param dice_value: значение дайса (число)
-    :return: Пара ("изменение счёта", "список выпавших элементов")
+    Returns localized string with dice result
+    :param dice_value: dice value (1-64)
+    :param l10n: Fluent localization object
+    :return: string with localized result
     """
-    return (
-        get_score_change(dice_value),
-        ', '.join(get_combo_text(dice_value))
-    )
+    parts: list[str] = get_combo_parts(dice_value)
+    for i in range(len(parts)):
+        parts[i] = l10n.format_value(parts[i])
+    return ", ".join(parts)

@@ -5,14 +5,14 @@ from aiogram.dispatcher.flags import get_flag
 from aiogram.types import Message
 from cachetools import TTLCache
 
-from bot.const import THROTTLE_TIME_SPIN, THROTTLE_TIME_OTHER
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    caches = {
-        "spin": TTLCache(maxsize=10_000, ttl=THROTTLE_TIME_SPIN),
-        "default": TTLCache(maxsize=10_000, ttl=THROTTLE_TIME_OTHER)
-    }
+    def __init__(self, throttle_time_spin: int, throttle_time_other: int):
+        self.caches = {
+            "spin": TTLCache(maxsize=10_000, ttl=throttle_time_spin),
+            "default": TTLCache(maxsize=10_000, ttl=throttle_time_other)
+        }
 
     async def __call__(
             self,
