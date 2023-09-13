@@ -2,8 +2,8 @@ from asyncio import sleep
 from contextlib import suppress
 
 from aiogram import Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums.dice_emoji import DiceEmoji
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -33,9 +33,10 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
         await message.answer(l10n.format_value("zero-balance"))
         return
 
-    # Отправка дайса пользователю
+    # Send dice to user
     msg = await message.answer_dice(emoji=DiceEmoji.SLOT_MACHINE, reply_markup=get_spin_keyboard(l10n))
 
+    # Check whether he won or not
     score_change = get_score_change(msg.dice.value)
 
     if score_change < 0:
@@ -43,7 +44,7 @@ async def cmd_spin(message: Message, state: FSMContext, l10n: FluentLocalization
     else:
         win_or_lose_text = l10n.format_value("spin-success", {"score_change": score_change})
 
-    # Обновление счёта
+    # Updating score in FSM data
     new_score = user_score + score_change
     await state.update_data(score=new_score)
 
