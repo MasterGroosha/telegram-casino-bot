@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+    bot:
+        # This is universal x86/ARM64 build
+        image: groosha/telegram-casino-bot:latest
+        restart: "always"
+        stop_signal: SIGINT
+        volumes:
+            # Path to .env file with settings
+            - "/home/user/casino-bot-redis/.env:/app/.env"
+            # Path to localization directories
+            - "/home/user/casino-bot-redis/locales:/app/bot/locales"
+        depends_on:
+            - redis
+    redis:
+        image: redis:7
+        restart: "always"
+        volumes:
+            # Path to directory with redis.conf file
+            - "/home/user/casino-bot-redis/redis_config:/usr/local/etc/redis"
+            # Path to Redis dumps directory
+            - "/home/user/casino-bot-redis/redis_data:/data"
+        command: "redis-server /usr/local/etc/redis/redis.conf"
+        healthcheck:
+            test: [ "CMD", "redis-cli","ping" ]

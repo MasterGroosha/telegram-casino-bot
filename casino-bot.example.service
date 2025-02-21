@@ -1,0 +1,14 @@
+[Unit]
+Description=Telegram Casino Bot
+After=network.target redis.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/user/casino-bot
+ExecStart=/home/user/casino-bot/venv/bin/python -m bot
+KillMode=process
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
