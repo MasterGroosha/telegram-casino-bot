@@ -1,31 +1,77 @@
-from enum import Enum
-from typing import Optional
+from enum import StrEnum, auto
+from functools import lru_cache
+from os import getenv
+from tomllib import load
+from typing import Type, TypeVar
 
-from pydantic import field_validator, SecretStr, RedisDsn, FieldValidationInfo
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, SecretStr, field_validator, RedisDsn
+
+ConfigType = TypeVar("ConfigType", bound=BaseModel)
 
 
-class FSMMode(str, Enum):
-    MEMORY = "memory"
-    REDIS = "redis"
+class LogRenderer(StrEnum):
+    JSON = auto()
+    CONSOLE = auto()
 
 
-class Settings(BaseSettings):
-    bot_token: SecretStr
+class FSMMode(StrEnum):
+    MEMORY = auto()
+    REDIS = auto()
+
+
+class BotConfig(BaseModel):
+    token: SecretStr
     fsm_mode: FSMMode
-    redis: Optional[RedisDsn] = None
-    bot_language: str
-    starting_points: int = 50
-    send_gameover_sticker: bool = False
-    throttle_time_spin: int = 2
-    throttle_time_other: int = 1
 
-    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
-
-    @field_validator("redis", mode="after")
+    @field_validator('fsm_mode', mode="before")
     @classmethod
-    def skip_validating_redis(cls, v: Optional[RedisDsn], info: FieldValidationInfo):
-        if info.data.get("fsm_mode") == FSMMode.REDIS and v is None:
-            err = 'FSM Mode is set to "Redis", but Redis DNS is missing!'
-            raise ValueError(err)
-        return v
+    def fsm_mode_to_lower(cls, v: str):
+        return v.lower()
+
+
+class LogConfig(BaseModel):
+    project_name: str = "my project"
+    show_datetime: bool
+    datetime_format: str
+    show_debug_logs: bool
+    time_in_utc: bool
+    use_colors_in_console: bool
+    renderer: LogRenderer
+    allow_third_party_logs: bool
+
+    @field_validator('renderer', mode="before")
+    @classmethod
+    def log_renderer_to_lower(cls, v: str):
+        return v.lower()
+
+
+class RedisConfig(BaseModel):
+    dsn: RedisDsn
+
+
+class GameConfig(BaseModel):
+    starting_points: int
+    send_gameover_sticker: bool
+    throttle_time_spin: int
+    throttle_time_other: int
+
+@lru_cache
+def parse_config_file() -> dict:
+    # Проверяем наличие переменной окружения, которая переопределяет путь к конфигу
+    file_path = getenv("CONFIG_FILE_PATH")
+    if file_path is None:
+        error = "Could not find settings file"
+        raise ValueError(error)
+    # Читаем сам файл, пытаемся его распарсить как TOML
+    with open(file_path, "rb") as file:
+        config_data = load(file)
+    return config_data
+
+
+@lru_cache
+def get_config(model: Type[ConfigType], root_key: str) -> ConfigType:
+    config_dict = parse_config_file()
+    if root_key not in config_dict:
+        error = f"Key {root_key} not found"
+        raise ValueError(error)
+    return model.model_validate(config_dict[root_key])

@@ -1,0 +1,14 @@
+[project]
+name = "telegram-casino-bot"
+version = "2025.02.1"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiogram>=3.18.0",
+    "async-timeout>=5.0.1",
+    "cachetools>=5.5.2",
+    "fluent-runtime>=0.4.0",
+    "redis>=5.2.1",
+    "structlog>=25.1.0",
+]
