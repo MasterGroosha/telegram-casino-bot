@@ -1,25 +1,37 @@
-version: "3.8"
+name: "telegram-casino-bot"
 services:
     bot:
-        # This is universal x86/ARM64 build
-        image: groosha/telegram-casino-bot:latest
+        build:
+            context: "."
+            dockerfile: "Dockerfile"
+        profiles:
+            - "all"
         restart: "always"
         stop_signal: SIGINT
         volumes:
-            # Path to .env file with settings
-            - "/home/user/casino-bot-redis/.env:/app/.env"
-            # Path to localization directories
-            - "/home/user/casino-bot-redis/locales:/app/bot/locales"
+            # Path to .toml file with settings
+            - "/home/user/casino-bot-redis/settings.toml:/app/settings.toml"
+            # Path to localization directory
+            - "/home/user/casino-bot-redis/locale/example/en:/app/bot/locale/current/en"
+        environment:
+            - CONFIG_FILE_PATH=/app/settings.toml
         depends_on:
             - redis
+
     redis:
+        profiles:
+            - "all"
+            - "infra"
         image: redis:7
         restart: "always"
         volumes:
-            # Path to directory with redis.conf file
-            - "/home/user/casino-bot-redis/redis_config:/usr/local/etc/redis"
-            # Path to Redis dumps directory
-            - "/home/user/casino-bot-redis/redis_data:/data"
+            # Path to redis.conf file
+            - "/home/user/casino-bot-redis/redis.conf:/usr/local/etc/redis/redis.conf"
+            # Redis volume
+            - "redis_data:/data"
         command: "redis-server /usr/local/etc/redis/redis.conf"
         healthcheck:
             test: [ "CMD", "redis-cli","ping" ]
+
+volumes:
+    redis_data:
