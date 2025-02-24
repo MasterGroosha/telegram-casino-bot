@@ -1,0 +1,43 @@
+[bot]
+# Bot token. Obtain one from https://t.me/botfather
+token = "1234567890:AaBbCcDdEeFfGrOoShALlMmNnOoPpQqRrSs"
+# Where to store users' data. Options: "memory", "redis".
+# Memory storage gets wiped upon bot restart, Redis uses persistency.
+fsm_mode = "redis"
+
+
+[redis]
+# In case you select "Redis" fsm_mode, specify connection string here
+dsn = "redis://user:pass@host:port"
+
+
+[logs]
+# Project name. Used in logs, useful when aggregating logs from different bots.
+project_name = "casino_bot"
+# If true, logs will include date and time of the event
+show_datetime = true
+# Datetime format in logs
+datetime_format = "%Y-%m-%d %H:%M:%S"
+# If true, logs with DEBUG level will be shown. Otherwise, only INFO+
+show_debug_logs = false
+# If true, logs will use UTC time instead of server's local time
+time_in_utc = false
+# How to show logs. Options: "console", "json"
+renderer = "json"
+# If true, "console" renderer will use colors when rendering logs
+use_colors_in_console = false
+# If true, logs from other libraries (e.g. aiogram) will be shown
+allow_third_party_logs = true
+# If true, logs about players' events will be shown
+log_players_events = true
+
+
+[game_config]
+# Starting points for all new games
+starting_points = 50
+# Whether to send a special "game over" sticker or not. Specify sticker's file id in localization file
+send_gameover_sticker = true
+# Throttling time for spins. Casino dice animation is variable, on average ~2 seconds long
+throttle_time_spin = 2
+# Throttling time for all other actions.
+throttle_time_other = 1
