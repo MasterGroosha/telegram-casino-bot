@@ -1,0 +1,1 @@
+Place your locale directory with ftl-files here.

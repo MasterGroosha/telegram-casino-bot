@@ -38,3 +38,16 @@ Alternative way: you can use Systemd services, there is also an [example](casino
 
 * [@Tishka17](https://t.me/Tishka17) for initial inspiration
 * [@svinerus](https://t.me/svinerus) for compact dice combination check (f6f42a841d3c1778f0e32)
+
+
+## Note on versioning
+
+For most of my Telegram bots, I plan to use Calendar Versioning with the following rules:
+
+* Versions should look like `vAAAA.BB.C`, where:
+* * `vAAAA` is the letter "v" followed by the 4-digit year of release, e.g., `v2025`.
+* * `BB` is the 2-digit month number, e.g., `06` for June.
+* * `C` is the release number for that month, not zero-padded, e.g., 1 for the first release in June.
+For example, the first release to use the new versioning schema will be tagged as `v2025.06.1`.
+
+This scheme makes it easier to understand which Bot API features might be supported in a given release and which are definitely not.

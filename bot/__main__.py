@@ -1,52 +1,72 @@
 import asyncio
-import logging
 
+import structlog
 from aiogram import Bot, Dispatcher, F
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
+from structlog.typing import FilteringBoundLogger
 
-from bot.config_reader import Settings
+from bot.config_reader import LogConfig, get_config, BotConfig, FSMMode, RedisConfig, GameConfig
 from bot.fluent_loader import get_fluent_localization
 from bot.handlers import default_commands, spin
+from bot.logs import get_structlog_config
 from bot.middlewares.throttling import ThrottlingMiddleware
 from bot.ui_commands import set_bot_commands
 
 
 async def main():
-    logging.basicConfig(level=logging.WARNING)
-    config = Settings()
+    log_config = get_config(model=LogConfig, root_key="logs")
+    structlog.configure(**get_structlog_config(log_config))
 
-    bot = Bot(config.bot_token.get_secret_value(), parse_mode="HTML")
+    bot_config = get_config(model=BotConfig, root_key="bot")
+    bot = Bot(
+        token=bot_config.token.get_secret_value(),
+        default=DefaultBotProperties(
+            parse_mode=ParseMode.HTML
+        )
+    )
 
-    # Выбираем нужный сторадж
-    if config.fsm_mode == "redis":
+    if bot_config.fsm_mode == FSMMode.REDIS:
+        redis_config = get_config(model=RedisConfig, root_key="redis")
         storage = RedisStorage.from_url(
-            url=str(config.redis),
-            connection_kwargs={"decode_responses": True}
+            url=str(redis_config.dsn),
+            connection_kwargs={"decode_responses": True},
         )
     else:
         storage = MemoryStorage()
 
     # Loading localization for bot
-    l10n = get_fluent_localization(config.bot_language)
+    l10n = get_fluent_localization()
 
-    # Создание диспетчера
-    dp = Dispatcher(storage=storage, l10n=l10n, config=config)
-    # Принудительно настраиваем фильтр на работу только в чатах один-на-один с ботом
+    game_config = get_config(model=GameConfig, root_key="game_config")
+
+    # Creating dispatcher with some dependencies
+    dp = Dispatcher(
+        storage=storage,
+        l10n=l10n,
+        game_config=game_config,
+    )
+    # Make bot work only in PM (one-on-one chats) with bot
     dp.message.filter(F.chat.type == "private")
 
-    # Регистрация роутеров с хэндлерами
+    # Register routers with handlers
     dp.include_router(default_commands.router)
     dp.include_router(spin.router)
 
-    # Регистрация мидлвари для троттлинга
-    dp.message.middleware(ThrottlingMiddleware(config.throttle_time_spin, config.throttle_time_other))
+    # Register throttling middleware
+    dp.message.middleware(
+        ThrottlingMiddleware(game_config.throttle_time_spin, game_config.throttle_time_other)
+    )
 
     # Set bot commands in the UI
     await set_bot_commands(bot, l10n)
 
+    logger: FilteringBoundLogger = structlog.get_logger()
+    await logger.ainfo("Starting polling...")
     try:
-        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+        await dp.start_polling(bot)
     finally:
         await bot.session.close()
 

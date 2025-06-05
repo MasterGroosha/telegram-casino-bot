@@ -1,6 +1,9 @@
 .idea/
 /venv/
+/.venv/
 .vscode/
 *.ipynb
 docker-compose.yml
 .env
+/redis.conf
+/settings.toml
