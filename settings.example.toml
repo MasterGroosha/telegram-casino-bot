@@ -28,8 +28,6 @@ renderer = "json"
 use_colors_in_console = false
 # If true, logs from other libraries (e.g. aiogram) will be shown
 allow_third_party_logs = true
-# If true, logs about players' events will be shown
-log_players_events = true
 
 
 [game_config]
