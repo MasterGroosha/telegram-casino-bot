@@ -22,7 +22,7 @@ services:
         profiles:
             - "all"
             - "infra"
-        image: redis:7
+        image: "redis:8-alpine"
         restart: "always"
         volumes:
             # Path to redis.conf file
