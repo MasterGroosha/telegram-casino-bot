@@ -13,6 +13,7 @@ from bot.fluent_loader import get_fluent_localization
 from bot.handlers import default_commands, spin
 from bot.logs import get_structlog_config
 from bot.middlewares.throttling import ThrottlingMiddleware
+from bot.ui_commands import set_bot_commands
 
 
 async def main():
@@ -60,7 +61,7 @@ async def main():
     )
 
     # Set bot commands in the UI
-    # await set_bot_commands(bot, l10n)
+    await set_bot_commands(bot, l10n)
 
     logger: FilteringBoundLogger = structlog.get_logger()
     await logger.ainfo("Starting polling...")
