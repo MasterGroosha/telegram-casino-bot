@@ -41,18 +41,23 @@ async def main():
 
     game_config = get_config(model=GameConfig, root_key="game_config")
 
-    # Создание диспетчера
-    dp = Dispatcher(storage=storage, l10n=l10n, game_config=game_config)
-    # Принудительно настраиваем фильтр на работу только в чатах один-на-один с ботом
+    # Creating dispatcher with some dependencies
+    dp = Dispatcher(
+        storage=storage,
+        l10n=l10n,
+        game_config=game_config,
+    )
+    # Make bot work only in PM (one-on-one chats) with bot
     dp.message.filter(F.chat.type == "private")
 
-    # Регистрация роутеров с хэндлерами
+    # Register routers with handlers
     dp.include_router(default_commands.router)
     dp.include_router(spin.router)
 
-    # Регистрация мидлвари для троттлинга
-
-    dp.message.middleware(ThrottlingMiddleware(game_config.throttle_time_spin, game_config.throttle_time_other))
+    # Register throttling middleware
+    dp.message.middleware(
+        ThrottlingMiddleware(game_config.throttle_time_spin, game_config.throttle_time_other)
+    )
 
     # Set bot commands in the UI
     # await set_bot_commands(bot, l10n)
