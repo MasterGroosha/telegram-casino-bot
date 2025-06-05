@@ -1,7 +1,7 @@
 [project]
 name = "telegram-casino-bot"
-version = "2025.02.1"
-description = "Add your description here"
+version = "2025.06.1"
+description = "A simple casino-like bot for Telegram"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
