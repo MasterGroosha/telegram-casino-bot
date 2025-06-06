@@ -1,0 +1,8 @@
+repo_images/
+redis.example.conf
+settings.example.toml
+.git/
+.idea/
+.vscode/
+__pycache__
+*.pyc
