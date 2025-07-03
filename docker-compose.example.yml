@@ -10,9 +10,9 @@ services:
         stop_signal: SIGINT
         volumes:
             # Path to .toml file with settings
-            - "/home/user/casino-bot-redis/settings.toml:/app/settings.toml"
+            - "/home/user/casino-bot/settings.toml:/app/settings.toml"
             # Path to localization directory
-            - "/home/user/casino-bot-redis/locale/example/en:/app/bot/locale/current/en"
+            - "/home/user/casino-bot/locale/example/en:/app/bot/locale/current/en"
         environment:
             - CONFIG_FILE_PATH=/app/settings.toml
         depends_on:
@@ -26,7 +26,7 @@ services:
         restart: "always"
         volumes:
             # Path to redis.conf file
-            - "/home/user/casino-bot-redis/redis.conf:/usr/local/etc/redis/redis.conf"
+            - "/home/user/casino-bot/redis.conf:/usr/local/etc/redis/redis.conf"
             # Redis volume
             - "redis_data:/data"
         command: "redis-server /usr/local/etc/redis/redis.conf"

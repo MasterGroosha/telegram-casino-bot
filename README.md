@@ -25,12 +25,13 @@ Dice are generated on Telegram server-side, you your bot cannot affect the resul
 
 ## Installation
 
-Copy `env_example` file to `.env` (with leading dot), open and edit it. Create `redis_data` and `redis_config` 
-directories, put `redis.conf` file into the latter (there is [example](redis.example.conf) in this repo). 
-Create `locales` folder with languages subdirs (e.g. `locales/en`) and put your localization file(s) in those subdirs. 
-Check [this directory](bot/locales/example) for samples. Please note that only one language can be active at a time.
+Copy `settings.example.toml` file to `settings.toml`, open and edit it.  
+To change bot's language, overwrite `bot/locale/current` directory contents with a chosen language. For example, you want 
+to use English language in your bot. Then, in `bot/locale/current` create a directory named `en` and place your `.ftl` 
+files inside. Check [this directory](bot/locales/example) for samples. 
+Please note that only one language can be active at a time.
 
-Finally, run the bot with `docker-compose up -d` command.
+Finally, run the bot with `docker-compose --profile "all" up -d` command.
 
 Alternative way: you can use Systemd services, there is also an [example](casino-bot.example.service) available.
 
